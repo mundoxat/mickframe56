@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mick xatframe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Quicksand:wght@300;500;700&family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="icon" href="https://xat.com/content/web/R00227/img/favicon-32x32.png" sizes="32x32" type="image/png">
+	<style>
+        :root {
+            --hk-pink: #ff85a2;
+            --hk-dark-pink: #ff4d6d;
+            --hk-white: #ffffff;
+            --hk-black: #000000;
+        }
+
+        body {
+            background: var(--hk-black);
+            font-family: 'Quicksand', sans-serif;
+            color: white;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden; /* Evita scroll durante la transición */
+        }
+
+        /* --- Estrellas Animadas --- */
+        .star-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: moveStar linear infinite;
+        }
+
+        @keyframes moveStar {
+            from { transform: translateY(0); }
+            to { transform: translateY(-100vh); }
+        }
+
+        /* --- Pantalla de Intro --- */
+        #intro-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 1.2s cubic-bezier(0.7, 0, 0.3, 1);
+        }
+
+        .intro-img {
+            width: 280px;
+            border-radius: 20px;
+            border: 3px solid var(--hk-pink);
+            box-shadow: 0 0 40px var(--hk-pink);
+            margin-bottom: 2rem;
+        }
+
+        .enter-btn {
+            background: transparent;
+            color: var(--hk-pink);
+            border: 2px solid var(--hk-pink);
+            padding: 12px 40px;
+            border-radius: 50px;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(255, 133, 162, 0.3);
+        }
+
+        .enter-btn:hover {
+            background: var(--hk-pink);
+            color: black;
+            box-shadow: 0 0 30px var(--hk-pink);
+            transform: scale(1.1);
+        }
+
+        /* --- Transiciones Épicas --- */
+        .fade-out {
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(3); /* Efecto de entrar al espacio */
+        }
+
+        #main-content {
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 1.5s ease-out;
+            display: none;
+            z-index: 10;
+            position: relative;
+        }
+
+        #main-content.visible {
+            opacity: 1;
+            transform: scale(1);
+            display: flex;
+        }
+
+        /* --- Contenedor Principal (Tarjeta) --- */
+        .glass-card {
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(15px);
+            border: 2px solid var(--hk-pink);
+            box-shadow: 0 0 30px rgba(255, 133, 162, 0.4);
+            border-radius: 2.5rem;
+            position: relative;
+        }
+
+        .clock-font {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: bold;
+            background: linear-gradient(to right, var(--hk-pink) 20%, #fff 40%, #fff 60%, var(--hk-pink) 80%);
+            background-size: 200% auto;
+            color: #000;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 3s linear infinite, glowPulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes shine { to { background-position: 200% center; } }
+        @keyframes glowPulse {
+            from { filter: drop-shadow(0 0 5px rgba(255, 133, 162, 0.5)); }
+            to { filter: drop-shadow(0 0 20px rgba(255, 133, 162, 0.9)); }
+        }
+
+        .name-font {
+            font-family: 'Pacifico', cursive;
+            background: linear-gradient(to bottom, #fff, var(--hk-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 3.5rem;
+        }
+
+        /* --- Borde Circular Animado --- */
+        .profile-container {
+            position: relative;
+            width: 170px;
+            height: 170px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-border-anim {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 4px dashed var(--hk-pink);
+            animation: rotateBorder 10s linear infinite;
+        }
+
+        @keyframes rotateBorder { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .profile-img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 50%;
+            z-index: 2;
+            border: 3px solid white;
+        }
+
+        /* --- Reproductor de Música --- */
+        #music-player {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 220px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid var(--hk-pink);
+            border-radius: 20px;
+            padding: 12px;
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 0 20px rgba(255, 133, 162, 0.3);
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s;
+        }
+
+        #music-player.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .player-cover {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 10px;
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .play-btn {
+            background: var(--hk-pink);
+            color: black;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .play-btn:hover { transform: scale(1.1); }
+
+        .volume-slider {
+            width: 80px;
+            height: 4px;
+            accent-color: var(--hk-pink);
+        }
+
+        /* Decorativos */
+        .decorative-img { position: absolute; transition: all 0.5s ease; filter: drop-shadow(0 0 8px var(--hk-pink)); }
+        .floating { animation: floating 3s ease-in-out infinite; }
+        @keyframes floating { 0%, 100% { transform: translate(-50%, 0px); } 50% { transform: translate(-50%, -15px); } }
+
+        .img-top { top: -70px; left: 50%; width: 110px; z-index: 20; }
+        .img-left { left: -90px; top: 35%; width: 100px; border-radius: 1.5rem; border: 2px solid var(--hk-pink); transform: rotate(-10deg); }
+        .img-right { right: -90px; top: 35%; width: 100px; border-radius: 1.5rem; border: 2px solid var(--hk-pink); transform: rotate(10deg); }
+
+        @media (max-width: 768px) {
+            .img-left, .img-right { display: none; }
+            #music-player { left: 50%; transform: translateX(-50%) translateY(100px); }
+            #music-player.visible { transform: translateX(-50%) translateY(0); }
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center">
+
+    <!-- Capa de Estrellas -->
+    <div id="star-field" class="star-container"></div>
+
+    <!-- Pantalla de Intro -->
+    <div id="intro-overlay">
+        <img src="https://media.tenor.com/U84CWyIZnJ0AAAAM/insomnia-chan-hot.gif" alt="Intro Image" class="intro-img">
+        <button class="enter-btn" onclick="startExperience()">Login</button>
+    </div>
+
+    <!-- Contenedor Principal (Oculto al inicio) -->
+    <div id="main-content" class="w-full flex justify-center p-6">
+        <div class="glass-card max-w-md w-full p-10 flex flex-col items-center text-center">
+            
+            <img src="https://xatimg.com/image/is3ptBORbsW5.png" alt="Decoration Top" class="decorative-img img-top floating">
+            <img src="https://xatimg.com/image/qa91mFeO7gMh.jpg" alt="Left Art" class="decorative-img img-left">
+            <img src="https://xatimg.com/image/9zTlPtYOevO6.jpg" alt="Right Art" class="decorative-img img-right">
+
+            <h1 class="name-font mt-6 mb-6">Mick</h1>
+
+            <div class="profile-container">
+                <div class="profile-border-anim"></div>
+                <img src="https://media.tenor.com/ZafC06r3sksAAAAM/anime-anime-girl.gif" alt="Profile" class="profile-img">
+                <div class="absolute -top-1 -right-1 bg-white rounded-full p-1 border-2 border-pink-400 z-10">
+                    <svg style="color:#ff85a2; width:24px;" viewBox="0 0 24 24" fill="currentColor"><path d="M12,10.5c-1.38,0-2.5-1.12-2.5-2.5s1.12-2.5,2.5-2.5s2.5,1.12,2.5,2.5S13.38,10.5,12,10.5z M7,6c-1.66,0-3,1.34-3,3 c0,1.66,1.34,3,3,3c0.35,0,0.67-0.06,0.98-0.17C8.11,11.37,8.5,10.45,8.5,9.5c0-0.95-0.39-1.87-0.52-2.33C7.67,6.06,7.35,6,7,6z M17,6 c-0.35,0-0.67,0.06-0.98,0.17c0.13,0.46,0.52,1.38,0.52,2.33c0,0.95-0.39,1.87-0.52,2.33c0.31,0.11,0.63,0.17,0.98,0.17 c1.66,0,3-1.34,3-3C20,7.34,18.66,6,17,6z"/></svg>
+                </div>
+            </div>
+
+            <div class="clock-font mb-10">10004</div>
+
+            <div class="sobre-mi w-full p-6 rounded-3xl">
+                <h2 class="text-pink-300 font-bold uppercase tracking-widest text-xs mb-4">About me</h2>
+                <div class="flex flex-col gap-4 items-center">
+                    <div class="flex items-center bg-black/60 px-4 py-2 rounded-full border border-pink-500/30 w-full justify-center">
+                        <span class="mr-2 text-xs text-pink-100">Made In:</span>
+                        <img src="https://flagicons.lipis.dev/flags/4x3/fm.svg" class="w-6 h-6">
+                    </div>
+                    <div class="flex items-center bg-black/60 px-4 py-2 rounded-full border border-pink-500/30 w-full justify-center">
+                        <span class="mr-2 text-xs text-pink-100">Addicted To:</span>
+                        <img src="https://xatimg.com/image/bkdP11GhVgq6.png" alt="Coquita" class="w-6 h-6 object-contain mr-1">
+                        <span class="font-bold text-pink-200">Little Glass Coconut</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reproductor -->
+    <div id="music-player">
+        <img src="https://xatimg.com/image/Db0MvAHCG2gl.jpg" alt="Cover" class="player-cover">
+        <div class="controls">
+            <div id="play-pause" class="play-btn" onclick="togglePlay()">
+                <svg id="play-icon" viewBox="0 0 24 24" width="20" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+            <input type="range" class="volume-slider" min="0" max="1" step="0.1" value="0.5" onchange="updateVolume(this.value)">
+        </div>
+        <audio id="audio-element" loop>
+            <source src="musica.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <script>
+        // Estrellas
+        const starField = document.getElementById('star-field');
+        for (let i = 0; i < 150; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            const size = Math.random() * 3;
+            star.style.width = `${size}px`;
+            star.style.height = `${size}px`;
+            star.style.left = `${Math.random() * 100}%`;
+            star.style.top = `${Math.random() * 100}%`;
+            star.style.animationDuration = `${5 + Math.random() * 15}s`;
+            starField.appendChild(star);
+        }
+
+        const audio = document.getElementById('audio-element');
+        const playIcon = document.getElementById('play-icon');
+
+        function startExperience() {
+            // Reproducir música inmediatamente al hacer clic
+            audio.play().then(() => {
+                updatePlayIcon(true);
+            }).catch(e => {
+                console.log("Error al reproducir audio:", e);
+            });
+
+            // Iniciar transiciones visuales
+            document.getElementById('intro-overlay').classList.add('fade-out');
+            
+            setTimeout(() => {
+                const main = document.getElementById('main-content');
+                main.style.display = 'flex';
+                setTimeout(() => {
+                    main.classList.add('visible');
+                    document.getElementById('music-player').classList.add('visible');
+                }, 100);
+            }, 1000);
+        }
+
+        function togglePlay() {
+            if (audio.paused) {
+                audio.play();
+                updatePlayIcon(true);
+            } else {
+                audio.pause();
+                updatePlayIcon(false);
+            }
+        }
+
+        function updatePlayIcon(isPlaying) {
+            if (isPlaying) {
+                playIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+            } else {
+                playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+            }
+        }
+
+        function updateVolume(val) {
+            audio.volume = val;
+        }
+    </script>
+</body>
+</html>
+
